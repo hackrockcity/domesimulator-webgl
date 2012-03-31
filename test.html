@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Sample Three.js</title>
+		<style>
+			#container {
+				background: #000;
+				width: 1024px;
+				height: 768px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container">
+
+
+		</div>
+
+	</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<script src="Three.js"></script>
+
+	<script type="text/javascript">
+
+	// @see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
+
+	// set the scene size
+	var WIDTH = 1024,
+	    HEIGHT = 768;
+
+	// set some camera attributes
+	var VIEW_ANGLE = 45,
+	    ASPECT = WIDTH / HEIGHT,
+	    NEAR = 0.1,
+	    FAR = 10000;
+
+	// get the DOM element to attach to
+	// - assume we've got jQuery to hand
+	var $container = $('#container');
+
+	// create a WebGL renderer, camera
+	// and a scene
+	var renderer = new THREE.WebGLRenderer();
+	var camera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
+	                                ASPECT,
+	                                NEAR,
+	                                FAR  );
+	var scene = new THREE.Scene();
+
+	// the camera starts at 0,0,0 so pull it back
+	camera.position.z = 300;
+
+        scene.add(camera);
+
+	// start the renderer
+	renderer.setSize(WIDTH, HEIGHT);
+
+	// attach the render-supplied DOM element
+	$container.append(renderer.domElement);
+
+	// create a point light
+	var pointLight = new THREE.PointLight( 0xFFFFFF );
+
+	// set its position
+	pointLight.position.x = 10;
+	pointLight.position.y = 50;
+	pointLight.position.z = 130;
+
+	// add to the scene
+	scene.add(pointLight);
+
+var lights_per_strip_ = 45*3;
+var strips_ = 25;
+var radius_ = 100;
+var PI = 3.14159;
+var HALF_PI = PI/2;
+
+// create the particle variables
+var particleCount = lights_per_strip_ * strips_,
+    particles = new THREE.Geometry();
+
+// create the particle variables
+var pMaterial =
+  new THREE.ParticleBasicMaterial({
+    color: 0xFFFFFF,
+    vertexColors : 1,
+    size: 2,
+//    map: THREE.ImageUtils.loadTexture(
+//      "nyan.png"
+//    ),
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+
+var count = 0;
+
+for (var light = lights_per_strip_ -1; light > 0; light--) {
+  for (var strip = 0; strip < strips_; strip++) {
+
+    var inclination = HALF_PI + (HALF_PI)*(light/lights_per_strip_);
+    var azimuth     = (2*PI)*(strip/strips_);
+
+    var pX = radius_ * Math.cos(azimuth) * Math.sin(inclination);
+    var pZ = radius_ * Math.sin(azimuth) * Math.sin(inclination);
+    var pY = -radius_ *                     Math.cos(inclination);
+
+    var particle = new THREE.Vertex(
+        new THREE.Vector3(pX, pY, pZ)
+    );
+
+    // create a velocity vector
+    particle.velocity = new THREE.Vector3(
+      0,              // x
+      0,              // y: random vel
+      0);             // z
+
+
+    var color = new THREE.Color( light * 256 * 256 + light );
+    particles.colors.push(color);
+
+    // add it to the geometry
+    particles.vertices.push(particle);
+
+  }
+}
+
+// create the particle system
+var particleSystem =
+  new THREE.ParticleSystem(
+    particles,
+    pMaterial);
+
+// also update the particle system to
+// sort the particles which enables
+// the behaviour we want
+//particleSystem.sortParticles = true;
+
+// add it to the scene
+scene.add(particleSystem);
+
+
+function update() {
+
+/*
+  // add some rotation to the system
+  particleSystem.rotation.z += 0.01;
+
+  var pCount = particleCount;
+  while(pCount--) {
+
+    // get the particle
+    var particle =
+      particles.vertices[pCount];
+
+    // check if we need to reset
+    if(particle.position.y < -200) {
+      particle.position.y = 200;
+      particle.velocity.y = 0;
+    }
+
+    // update the velocity with
+    // a splat of randomniz
+    particle.velocity.y -=
+      Math.random() * .1;
+
+    // and the position
+    particle.position.addSelf(
+      particle.velocity);
+  }
+
+  // flag to the particle system
+  // that we've changed its vertices.
+  particleSystem.
+    geometry.
+    __dirtyVertices = true;
+*/
+
+  // update colors!
+  var cCount = particleCount;
+  while(cCount--) {
+    var c = particles.colors[cCount];
+    c.setRGB(Math.random()*255, Math.random()*255, Math.random*255);
+  }
+
+  // draw!
+  renderer.render(scene, camera);
+
+  // set up the next call
+  requestAnimFrame(update);
+}
+  update();
+//  requestAnimFrame(update);
+
+
+	</script>
+</html>
