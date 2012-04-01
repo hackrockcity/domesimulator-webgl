@@ -36,13 +36,12 @@
               };
     })();
 
-
 	// set the scene size
 	var WIDTH = 1024,
 	    HEIGHT = 768;
 
 	// set some camera attributes
-	var VIEW_ANGLE = 45,
+	var VIEW_ANGLE = 25,
 	    ASPECT = WIDTH / HEIGHT,
 	    NEAR = 0.1,
 	    FAR = 10000;
@@ -55,17 +54,6 @@
 	// and a scene
 	var renderer = new THREE.WebGLRenderer();
 	var scene = new THREE.Scene();
-/*
-	var camera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
-	                                ASPECT,
-	                                NEAR,
-	                                FAR  );
-
-	// the camera starts at 0,0,0 so pull it back
-	camera.position.z = 300;
-
-        scene.add(camera);
-*/
 
         // Camera from:
         // http://wecreategames.com/games/Three45/examples/misc_camera_trackball.html
@@ -74,7 +62,7 @@
            NEAR,
            FAR);
 
-	camera.position.z = 300;
+	camera.position.z = 500;
         camera.rotation.z = -.6;
 
 	controls = new THREE.TrackballControls( camera );
@@ -110,11 +98,29 @@
 	// add to the scene
 	scene.add(pointLight);
 
+
+  scene.fog = new THREE.Fog( 0x000000, 1500, 4000 );
+
+  // ground
+  var groundTexture = THREE.ImageUtils.loadTexture('LostLake.jpg');
+  groundTexture.wrapS = THREE.RepeatWrapping;
+  groundTexture.wrapT = THREE.RepeatWrapping;
+  groundTexture.repeat.x = 100;
+  groundTexture.repeat.y = 100;
+
+  var material = new THREE.MeshBasicMaterial({map: groundTexture});
+  var geometry = new THREE.PlaneGeometry(10000, 10000);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.x = -Math.PI / 2;
+  scene.add(mesh);
+
+  // lights 
+
 var lights_per_strip_ = 45*3;
 var strips_ = 25;
 var radius_ = 100;
-var PI = 3.14159;
-var HALF_PI = PI/2;
+var HALF_PI = Math.PI/2;
 
 // create the particle variables
 var particleCount = lights_per_strip_ * strips_,
@@ -125,7 +131,7 @@ var pMaterial =
   new THREE.ParticleBasicMaterial({
     color: 0xFFFFFF,
     vertexColors : 1,
-    size: 2,
+    size: 4,
     map: THREE.ImageUtils.loadTexture(
       "light.png"
     ),
@@ -139,7 +145,7 @@ for (var light = lights_per_strip_ -1; light > 0; light--) {
   for (var strip = 0; strip < strips_; strip++) {
 
     var inclination = HALF_PI + (HALF_PI)*(light/lights_per_strip_);
-    var azimuth     = (2*PI)*(strip/strips_);
+    var azimuth     = (2*Math.PI)*(strip/strips_);
 
     var pX = radius_ * Math.cos(azimuth) * Math.sin(inclination);
     var pZ = radius_ * Math.sin(azimuth) * Math.sin(inclination);
@@ -219,7 +225,7 @@ function update() {
   var Count = 3375-50;
   while(Count--) {
     var c = particles.colors[Count];
-    c.setRGB(Math.random(), Math.random(), Math.random());
+    c.setHSV(Math.random(), 1 + 0*Math.random(), Math.random());
   }
   particleSystem.
     geometry.
