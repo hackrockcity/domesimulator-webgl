@@ -54,16 +54,44 @@
 	// create a WebGL renderer, camera
 	// and a scene
 	var renderer = new THREE.WebGLRenderer();
+	var scene = new THREE.Scene();
+/*
 	var camera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
 	                                ASPECT,
 	                                NEAR,
 	                                FAR  );
-	var scene = new THREE.Scene();
 
 	// the camera starts at 0,0,0 so pull it back
 	camera.position.z = 300;
 
         scene.add(camera);
+*/
+
+        // Camera from:
+        // http://wecreategames.com/games/Three45/examples/misc_camera_trackball.html
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE,
+           ASPECT,
+           NEAR,
+           FAR);
+
+	camera.position.z = 300;
+        camera.rotation.z = -.6;
+
+	controls = new THREE.TrackballControls( camera );
+
+	controls.rotateSpeed = 1.0;
+	controls.zoomSpeed = 1.2;
+	controls.panSpeed = 0.8;
+
+	controls.noZoom = false;
+	controls.noPan = false;
+
+	controls.staticMoving = true;
+	controls.dynamicDampingFactor = 0.3;
+
+	controls.keys = [ 65, 83, 68 ];
+
+	scene.add(camera);
 
 	// start the renderer
 	renderer.setSize(WIDTH, HEIGHT);
@@ -98,9 +126,9 @@ var pMaterial =
     color: 0xFFFFFF,
     vertexColors : 1,
     size: 2,
-//    map: THREE.ImageUtils.loadTexture(
-//      "nyan.png"
-//    ),
+    map: THREE.ImageUtils.loadTexture(
+      "light.png"
+    ),
     blending: THREE.AdditiveBlending,
     transparent: true
   });
@@ -146,19 +174,18 @@ var particleSystem =
 // also update the particle system to
 // sort the particles which enables
 // the behaviour we want
-//particleSystem.sortParticles = true;
+particleSystem.sortParticles = true;
 
 // add it to the scene
 scene.add(particleSystem);
 
-
 function update() {
+  // add some rotation to the system
+//  particleSystem.rotation.z += 0.01;
 
 /*
-  // add some rotation to the system
-  particleSystem.rotation.z += 0.01;
-
-  var pCount = particleCount;
+  //var pCount = particleCount;
+  var pCount = 2000;
   while(pCount--) {
 
     // get the particle
@@ -189,11 +216,16 @@ function update() {
 */
 
   // update colors!
-  var cCount = particleCount;
-  while(cCount--) {
-    var c = particles.colors[cCount];
-    c.setRGB(Math.random()*255, Math.random()*255, Math.random*255);
+  var Count = 3375-50;
+  while(Count--) {
+    var c = particles.colors[Count];
+    c.setRGB(Math.random(), Math.random(), Math.random());
   }
+  particleSystem.
+    geometry.
+    __dirtyColors = true;
+
+  controls.update();
 
   // draw!
   renderer.render(scene, camera);
@@ -201,9 +233,8 @@ function update() {
   // set up the next call
   requestAnimFrame(update);
 }
-  update();
-//  requestAnimFrame(update);
 
+  update();
 
 	</script>
 </html>
