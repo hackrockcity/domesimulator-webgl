@@ -158,9 +158,9 @@ var pMaterial =
     color: 0xFFFFFF,
     vertexColors : 1,
     size: 4,
-//    map: THREE.ImageUtils.loadTexture(
-//      "light.png"
-//    ),
+   map: THREE.ImageUtils.loadTexture(
+     "light.png"
+   ),
     blending: THREE.AdditiveBlending,
     transparent: true
   });
@@ -247,13 +247,6 @@ function update() {
     __dirtyVertices = true;
 */
 
-  // update colors!
-//  var Count = 3375-50;
-//  while(Count--) {
-//    var c = particles.colors[Count];
-//    c.setHSV(Math.random(), 1 + 0*Math.random(), Math.random());
-//  }
-
   controls.update();
 
   // draw!
@@ -261,8 +254,21 @@ function update() {
 
   // set up the next call
   requestAnimFrame(update);
+  //updateColors();
 }
+  
+function updateColors() {
+  // update colors!
+  var Count = 3375-50;
+  while(Count--) {
+  var c = particles.colors[Count];
+  c.setHSV(Math.random(), 1 + 0*Math.random(), Math.random());
+  }
 
+particleSystem.geometry.__dirtyColors = true;
+
+}
+  
   update();
 
 	</script>
