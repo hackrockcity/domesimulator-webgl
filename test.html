@@ -63,7 +63,7 @@
            FAR);
 
 	camera.position.z = 500;
-        camera.rotation.z = -.6;
+        camera.rotation.z = 20;
 
 	controls = new THREE.TrackballControls( camera );
 
@@ -132,9 +132,9 @@ var pMaterial =
     color: 0xFFFFFF,
     vertexColors : 1,
     size: 4,
-    map: THREE.ImageUtils.loadTexture(
-      "light.png"
-    ),
+//    map: THREE.ImageUtils.loadTexture(
+//      "light.png"
+//    ),
     blending: THREE.AdditiveBlending,
     transparent: true
   });
