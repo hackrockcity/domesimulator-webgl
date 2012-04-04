@@ -41,12 +41,13 @@
     var Count = 3375-50;
     while(Count--) {
       index = Count * 6 + 2
-      red   = parseInt(evt.data.substring(index,   index+2),16);
-      green = parseInt(evt.data.substring(index+2, index+4),16);
-      blue  = parseInt(evt.data.substring(index+4, index+6),16);
+//      red   = parseInt(evt.data.substring(index,   index+2),16);
+//      green = parseInt(evt.data.substring(index+2, index+4),16);
+//      blue  = parseInt(evt.data.substring(index+4, index+6),16);
 
       var c = particles.colors[Count];
-      c.setRGB(red/255, green/255, blue/255);
+//      c.setRGB(red/255, green/255, blue/255);
+      c.setHex(parseInt(evt.data.substring(index,index+6),16));
     }
   }
 
